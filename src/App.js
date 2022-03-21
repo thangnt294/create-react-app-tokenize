@@ -102,7 +102,7 @@ function App() {
       const body = JSON.parse(lastMessage.data);
       handleData(body)
     }
-  }, [lastMessage])
+  })
 
 const renderRows = () => {
   let rows = [<tr>{"Size --- Bid --- Ask --- Size"}</tr>];
