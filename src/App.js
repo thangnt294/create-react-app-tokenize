@@ -26,85 +26,83 @@ function App() {
     });
   })
 
-
-useEffect(() => {
-  if(lastMessage) {
-    const body = JSON.parse(lastMessage.data);
-    handleData(body)
+  const handleData = (body) => {
+    const bid = body.b;
+      const bidQty = body.B;
+      const ask = body.a;
+      const askQty = body.A;
+    
+      // initialize the array
+      let bidArr = [];
+      let bidQtyArr = [];
+      let askArr = [];
+      let askQtyArr = [];
+    
+      let bidLimit = 0;
+      let askLimit = 0;
+      // loop infinite
+      while (true) {
+          bidLimit = 0;
+          askLimit = 0;
+          let ok = true;
+          for (let i = 0; i < 9; i++) {
+              const randomBid = randomNumber(0, bid);
+              const randomBidQty = randomNumber(0.1, 5);
+              bidLimit += parseFloat(randomBid)*parseFloat(randomBidQty);
+              if (bidLimit >= 5) { // exceed limit, break and re-random
+                  ok = false;
+                  break;
+              }
+              const randomAsk = randomNumber(ask, (parseFloat(ask) + 0.5).toFixed(8));
+              const randomAskQty = randomNumber(0.1, 5);
+              askLimit += parseFloat(randomAskQty)
+              if (askLimit >= 150) { // exceed limit, break and re-random
+                  ok = false;
+                  break;
+              }
+              bidArr.push(randomBid);
+              bidQtyArr.push(randomBidQty);
+              askArr.push(randomAsk);
+              askQtyArr.push(randomAskQty);
+          }
+          if (!ok) { // reset the arrays when exceeding limit
+              bidArr = [];
+              bidQtyArr = [];
+              askArr = [];
+              askQtyArr = [];
+          } else {
+              break // everything ok, break to display the list
+          }
+      }
+      // sort the arrays to correct order
+      bidArr.sort((a,b) => b-a);
+      askArr.sort((a,b)=> a-b);
+    
+      // append the original value to the start of the list
+      bidArr.unshift(bid);
+      bidQtyArr.unshift(bidQty);
+      askArr.unshift(ask);
+      askQtyArr.unshift(askQty);
+    
+      setBidS(bidArr);
+      setBidQtyS(bidQtyArr);
+      setAskS(askArr);
+      setAskQtyS(askQtyArr);
+      setTotalAsk(askLimit);
+      setTotalBid(bidLimit);
   }
-}, [lastMessage, handleData])
 
+  const randomNumber = (min, max) => {
+      let value = (Math.random() * (parseFloat(max) - parseFloat(min))) + parseFloat(min);
+      return Number.parseFloat(value).toFixed(8);
+  }
 
-const randomNumber = (min, max) => {
-    let value = (Math.random() * (parseFloat(max) - parseFloat(min))) + parseFloat(min);
-    return Number.parseFloat(value).toFixed(8);
-}
-
-const handleData = (body) => {
-  const bid = body.b;
-    const bidQty = body.B;
-    const ask = body.a;
-    const askQty = body.A;
-  
-    // initialize the array
-    let bidArr = [];
-    let bidQtyArr = [];
-    let askArr = [];
-    let askQtyArr = [];
-  
-    let bidLimit = 0;
-    let askLimit = 0;
-    // loop infinite
-    while (true) {
-        bidLimit = 0;
-        askLimit = 0;
-        let ok = true;
-        for (let i = 0; i < 9; i++) {
-            const randomBid = randomNumber(0, bid);
-            const randomBidQty = randomNumber(0.1, 5);
-            bidLimit += parseFloat(randomBid)*parseFloat(randomBidQty);
-            if (bidLimit >= 5) { // exceed limit, break and re-random
-                ok = false;
-                break;
-            }
-            const randomAsk = randomNumber(ask, (parseFloat(ask) + 0.5).toFixed(8));
-            const randomAskQty = randomNumber(0.1, 5);
-            askLimit += parseFloat(randomAskQty)
-            if (askLimit >= 150) { // exceed limit, break and re-random
-                ok = false;
-                break;
-            }
-            bidArr.push(randomBid);
-            bidQtyArr.push(randomBidQty);
-            askArr.push(randomAsk);
-            askQtyArr.push(randomAskQty);
-        }
-        if (!ok) { // reset the arrays when exceeding limit
-            bidArr = [];
-            bidQtyArr = [];
-            askArr = [];
-            askQtyArr = [];
-        } else {
-            break // everything ok, break to display the list
-        }
+  useEffect(() => {
+    if(lastMessage) {
+      const body = JSON.parse(lastMessage.data);
+      handleData(body)
     }
-    // sort the arrays to correct order
-    bidArr.sort((a,b) => b-a);
-    askArr.sort((a,b)=> a-b);
-  
-    // append the original value to the start of the list
-    bidArr.unshift(bid);
-    bidQtyArr.unshift(bidQty);
-    askArr.unshift(ask);
-    askQtyArr.unshift(askQty);
-  
-    setBidS(bidArr);
-    setBidQtyS(bidQtyArr);
-    setAskS(askArr);
-    setAskQtyS(askQtyArr);
-    setTotalAsk(askLimit);
-    setTotalBid(bidLimit);
-}
+  }, [lastMessage])
 
 const renderRows = () => {
   let rows = [<tr>{"Size --- Bid --- Ask --- Size"}</tr>];
