@@ -24,7 +24,7 @@ function App() {
         ],
         id: 1
     });
-  }, [])
+  })
 
 
 useEffect(() => {
@@ -32,7 +32,7 @@ useEffect(() => {
     const body = JSON.parse(lastMessage.data);
     handleData(body)
   }
-}, [lastMessage])
+}, [lastMessage, handleData])
 
 
 const randomNumber = (min, max) => {
