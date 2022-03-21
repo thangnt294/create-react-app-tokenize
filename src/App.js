@@ -26,8 +26,15 @@ function App() {
     });
   })
 
-  const handleData = (body) => {
-    const bid = body.b;
+  const randomNumber = (min, max) => {
+      let value = (Math.random() * (parseFloat(max) - parseFloat(min))) + parseFloat(min);
+      return Number.parseFloat(value).toFixed(8);
+  }
+
+  useEffect(() => {
+    if(lastMessage) {
+      const body = JSON.parse(lastMessage.data);
+      const bid = body.b;
       const bidQty = body.B;
       const ask = body.a;
       const askQty = body.A;
@@ -90,19 +97,8 @@ function App() {
       setAskQtyS(askQtyArr);
       setTotalAsk(askLimit);
       setTotalBid(bidLimit);
-  }
-
-  const randomNumber = (min, max) => {
-      let value = (Math.random() * (parseFloat(max) - parseFloat(min))) + parseFloat(min);
-      return Number.parseFloat(value).toFixed(8);
-  }
-
-  useEffect(() => {
-    if(lastMessage) {
-      const body = JSON.parse(lastMessage.data);
-      handleData(body)
     }
-  })
+  }, [lastMessage])
 
 const renderRows = () => {
   let rows = [<tr>{"Size --- Bid --- Ask --- Size"}</tr>];
