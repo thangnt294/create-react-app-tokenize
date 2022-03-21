@@ -24,7 +24,7 @@ function App() {
         ],
         id: 1
     });
-  })
+  }, [sendJsonMessage])
 
   const randomNumber = (min, max) => {
       let value = (Math.random() * (parseFloat(max) - parseFloat(min))) + parseFloat(min);
@@ -33,6 +33,7 @@ function App() {
 
   useEffect(() => {
     if(lastMessage) {
+      console.log(lastMessage)
       const body = JSON.parse(lastMessage.data);
       const bid = body.b;
       const bidQty = body.B;
